@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario</title>
+</head>
+<body>
+    <canvas id="marioCanvas" width="800" height="600"></canvas>
+
+    <script>
+        var canvas = document.getElementById("marioCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // FONDO
+        ctx.fillStyle = "#87CEEB"; // Color del cielo
+        ctx.fillRect(0, 0, 800, 600);
+
+        // SUELO
+        ctx.fillStyle = "#ffae5c"; // Color del suelo
+        ctx.fillRect(0, 500, 800, 100);
+
+        // Borde delgado para el suelo
+        ctx.lineWidth = 1; // Ancho del borde
+        ctx.strokeStyle = "#000"; // Color del borde (negro)
+        ctx.strokeRect(0, 500, 800, 100); // Borde del suelo
+
+        // Cuadros pequeños en el suelo
+        function drawSmallSquares() {
+            var squareSize = 20; // Tamaño de los cuadros pequeños
+            for (var x = 0; x < 800; x += squareSize) {
+                for (var y = 500; y < 600; y += squareSize) {
+                    ctx.fillStyle = "#ffae5c"; // Color del suelo
+                    ctx.fillRect(x, y, squareSize, squareSize);
+
+                    // Borde delgado para los cuadros pequeños
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = "#000";
+                    ctx.strokeRect(x, y, squareSize, squareSize);
+                }
+            }
+        }
+
+        drawSmallSquares();
+
+        // BLOQUES
+        function drawBlock(x, y, width, height, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, width, height);
+
+            // Tornillos en las esquinas
+            ctx.fillStyle = "#000"; // Color negro para los tornillos
+            ctx.beginPath();
+            ctx.arc(x + 5, y + 5, 3, 0, 2 * Math.PI); // Esquina superior izquierda
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + width - 5, y + 5, 3, 0, 2 * Math.PI); // Esquina superior derecha
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + 5, y + height - 5, 3, 0, 2 * Math.PI); // Esquina inferior izquierda
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + width - 5, y + height - 5, 3, 0, 2 * Math.PI); // Esquina inferior derecha
+            ctx.fill();
+
+            // Borde delgado
+            ctx.lineWidth = 1; // Ancho del borde
+            ctx.strokeStyle = "#000"; // Color del borde (negro)
+            ctx.strokeRect(x, y, width, height);
+        }
+
+        drawBlock(100, 100, 50, 50, "#f08030"); // Bloque superior izquierdo
+        drawBlock(200, 100, 50, 50, "#f08030"); // Bloque superior derecho
+        drawBlock(400, 280, 140, 220, "#a0c0ff"); // Bloque azul
+        drawBlock(300, 360, 140, 140, "#ffc0c0"); // Bloque rosa
+
+        // Sombras de los bloques
+        ctx.fillStyle = "#232423"; // Color de las sombras
+        ctx.fillRect(440, 410, 15, 90); // Sombra del bloque rosa
+        ctx.fillRect(540, 350, 15, 150); // Sombra del bloque azul
+
+        // IMAGEN DE PLANTA (dibuja primero para que quede detrás del tubo)
+        var plantaImg = new Image(); // Crea un nuevo objeto de imagen
+        plantaImg.src = 'https://imgs.search.brave.com/7c4eM_Nz7bnv-mweNNN65QfGkOepp6OPWhRosU2at74/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMuc3RpY2twbmcu/Y29tL2ltYWdlcy81/ODRkZjQzODZhNWFl/NDFhODNkZGVlMGEu/cG5n'; // La ruta a tu imagen de planta
+
+        // Dibuja la imagen en el canvas cuando se haya cargado
+        plantaImg.onload = function() {
+            ctx.drawImage(plantaImg, 600, 225, 100, 100); // Dibuja la imagen en la posición (600, 225) con un tamaño de 100x100 píxeles
+
+            // TUBO VERDE (dibuja después para que quede encima de la planta)
+            ctx.fillStyle = "#00A000"; // Color verde para el tubo
+            ctx.fillRect(600, 300, 100, 200); // Tubo
+            ctx.fillRect(590, 290, 120, 20); // Parte superior más ancha
+
+            // Borde del tubo verde
+            ctx.lineWidth = 1; // Ancho del borde
+            ctx.strokeStyle = "#000"; // Color del borde (negro)
+            ctx.strokeRect(600, 300, 100, 200); // Borde del tubo
+            ctx.strokeRect(590, 290, 120, 20); // Borde de la parte superior
+
+            // Sombra del tubo verde
+            ctx.fillStyle = "#307e2a"; // Color de la sombra del tubo
+            ctx.fillRect(685, 310, 15, 190); // Sombra
+
+            // ARBUSTO PEQUEÑO (dibuja después del tubo para que quede delante de él)
+            ctx.fillStyle = "#228B22"; // Color verde para el arbusto
+            ctx.beginPath();
+            ctx.arc(50, 470, 30, 0, Math.PI * 2); // Semicírculo izquierdo
+            ctx.arc(90, 470, 30, 0, Math.PI * 2); // Semicírculo derecho
+            ctx.fillRect(50, 470, 40, 30); // Rectángulo debajo de los semicírculos
+            ctx.fill();
+
+            // IMAGEN DE MARIO (dibuja después del arbusto para que quede encima de todo)
+            var marioImg = new Image(); // Crea un nuevo objeto de imagen
+            marioImg.src = 'https://imgs.search.brave.com/mFSRfUlusf7YLCQqqcsnN0rDogEJ9cfPslRLJ3xMzCk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMuc3RpY2twbmcu/Y29tL2ltYWdlcy81/ODRkZjNhZDZhNWFl/NDFhODNkZGVlMDgu/cG5n'; // La ruta a tu imagen de Mario Bros
+
+            // Dibuja la imagen en el canvas cuando se haya cargado
+            marioImg.onload = function() {
+                ctx.drawImage(marioImg, 140, 300, 100, 100); // Dibuja la imagen en la posición (140, 300) con un tamaño de 100x100 píxeles
+            };
+        };
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
